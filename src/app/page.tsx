@@ -1,3 +1,4 @@
+import Image from "next/image";
 import AnalyzerForm from "@/components/AnalyzerForm";
 
 export default function Home() {
@@ -5,14 +6,23 @@ export default function Home() {
     <div className="min-h-screen">
       {/* Header */}
       <header className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            LinkedIn Profile Analyzer
-          </h1>
-          <p className="text-gray-600 mt-1">
-            AI-powered HR consultant that analyzes your profile against any job
-            description
-          </p>
+        <div className="max-w-4xl mx-auto px-4 py-6 flex items-center gap-4">
+          <Image
+            src="/Gemini_Generated_Image_i3s2ufi3s2ufi3s2.png"
+            alt="LinkedIn Profile Analyzer logo"
+            width={56}
+            height={56}
+            className="rounded-xl"
+          />
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              LinkedIn Profile Analyzer
+            </h1>
+            <p className="text-gray-600 mt-1">
+              AI-powered HR consultant that analyzes your profile against any job
+              description
+            </p>
+          </div>
         </div>
       </header>
 
