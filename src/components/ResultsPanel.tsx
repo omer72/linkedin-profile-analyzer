@@ -7,29 +7,37 @@ interface ResultsPanelProps {
 }
 
 function ScoreBadge({ score }: { score: number }) {
-  const color =
-    score >= 70
-      ? "bg-green-100 text-green-800 border-green-300"
-      : score >= 40
-        ? "bg-yellow-100 text-yellow-800 border-yellow-300"
-        : "bg-red-100 text-red-800 border-red-300";
+  const circumference = 2 * Math.PI * 45;
+  const offset = circumference - (score / 100) * circumference;
 
-  const barColor =
-    score >= 70 ? "bg-green-500" : score >= 40 ? "bg-yellow-500" : "bg-red-500";
+  const ringColor =
+    score >= 70 ? "stroke-emerald-500" : score >= 40 ? "stroke-amber-500" : "stroke-red-500";
+  const textColor =
+    score >= 70 ? "text-emerald-600" : score >= 40 ? "text-amber-600" : "text-red-600";
 
   return (
-    <div className="text-center">
-      <div
-        className={`inline-flex items-center justify-center w-24 h-24 rounded-full border-4 ${color} text-3xl font-bold`}
-      >
-        {score}%
-      </div>
-      <div className="mt-3 w-full max-w-xs mx-auto">
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className={`h-2 rounded-full ${barColor} transition-all duration-500`}
-            style={{ width: `${score}%` }}
+    <div className="flex justify-center">
+      <div className="relative w-32 h-32">
+        <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+          <circle
+            cx="50" cy="50" r="45"
+            fill="none"
+            strokeWidth="8"
+            className="stroke-slate-100"
           />
+          <circle
+            cx="50" cy="50" r="45"
+            fill="none"
+            strokeWidth="8"
+            strokeLinecap="round"
+            className={ringColor}
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            style={{ animation: `score-fill 1.2s ease-out` }}
+          />
+        </svg>
+        <div className={`absolute inset-0 flex items-center justify-center text-3xl font-bold ${textColor}`}>
+          {score}%
         </div>
       </div>
     </div>
@@ -38,21 +46,39 @@ function ScoreBadge({ score }: { score: number }) {
 
 function Section({
   title,
-  icon,
+  iconColor,
   children,
+  delay = 0,
 }: {
   title: string;
-  icon: string;
+  iconColor: string;
   children: React.ReactNode;
+  delay?: number;
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-        <span>{icon}</span>
+    <div
+      className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 p-6 animate-fade-in-up"
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-3">
+        <span className={`w-1 h-6 rounded-full ${iconColor}`} />
         {title}
       </h3>
       {children}
     </div>
+  );
+}
+
+function BulletList({ items, dotColor }: { items: string[]; dotColor: string }) {
+  return (
+    <ul className="space-y-2">
+      {items.map((item, i) => (
+        <li key={i} className="flex items-start gap-2.5 text-slate-700">
+          <span className={`w-2 h-2 rounded-full ${dotColor} mt-1.5 shrink-0`} />
+          {item}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -62,104 +88,73 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
   return (
     <div className="space-y-6">
       {/* Match Score */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+      <div
+        className="relative overflow-hidden rounded-2xl shadow-md border border-slate-200 p-8 bg-gradient-to-br from-slate-50 via-white to-indigo-50 animate-fade-in-up"
+      >
+        <h3 className="text-lg font-semibold text-slate-800 mb-4 text-center">
           Match Score
         </h3>
         <ScoreBadge score={result.matchScore} />
-        <p className="text-gray-600 mt-4 text-center max-w-2xl mx-auto">
+        <p className="text-slate-600 mt-4 text-center max-w-2xl mx-auto">
           {result.matchExplanation}
         </p>
       </div>
 
       {/* Company Intel */}
       {companyAnalysis && (
-        <Section title="Company Intel" icon="🏢">
+        <Section title="Company Intel" iconColor="bg-slate-600" delay={50}>
           <div className="space-y-5">
             <div>
-              <h4 className="text-sm font-semibold text-gray-700 mb-1">
+              <h4 className="text-sm font-semibold text-slate-700 mb-1">
                 {companyAnalysis.companyName}
               </h4>
-              <p className="text-gray-600 text-sm">{companyAnalysis.overview}</p>
+              <p className="text-slate-600 text-sm">{companyAnalysis.overview}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-1">
+              <div className="bg-slate-50 rounded-xl p-4">
+                <h4 className="text-sm font-semibold text-slate-700 mb-1">
                   Financial Status
                 </h4>
-                <p className="text-gray-600 text-sm">
+                <p className="text-slate-600 text-sm">
                   {companyAnalysis.financialStatus}
                 </p>
               </div>
-              <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-1">
+              <div className="bg-slate-50 rounded-xl p-4">
+                <h4 className="text-sm font-semibold text-slate-700 mb-1">
                   Growth Trajectory
                 </h4>
-                <p className="text-gray-600 text-sm">
+                <p className="text-slate-600 text-sm">
                   {companyAnalysis.growthTrajectory}
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Recent News */}
               {companyAnalysis.recentNews.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                  <h4 className="text-sm font-semibold text-slate-700 mb-2">
                     Recent News
                   </h4>
-                  <ul className="space-y-1.5">
-                    {companyAnalysis.recentNews.map((item, i) => (
-                      <li
-                        key={i}
-                        className="flex items-start gap-2 text-sm text-gray-700"
-                      >
-                        <span className="text-blue-500 mt-0.5 shrink-0">●</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                  <BulletList items={companyAnalysis.recentNews} dotColor="bg-indigo-500" />
                 </div>
               )}
 
-              {/* Concerns */}
               {companyAnalysis.concerns.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                  <h4 className="text-sm font-semibold text-slate-700 mb-2">
                     Concerns
                   </h4>
-                  <ul className="space-y-1.5">
-                    {companyAnalysis.concerns.map((item, i) => (
-                      <li
-                        key={i}
-                        className="flex items-start gap-2 text-sm text-gray-700"
-                      >
-                        <span className="text-red-500 mt-0.5 shrink-0">●</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                  <BulletList items={companyAnalysis.concerns} dotColor="bg-red-500" />
                 </div>
               )}
 
-              {/* Culture Signals */}
               {companyAnalysis.cultureSignals.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                  <h4 className="text-sm font-semibold text-slate-700 mb-2">
                     Culture Signals
                   </h4>
-                  <ul className="space-y-1.5">
-                    {companyAnalysis.cultureSignals.map((item, i) => (
-                      <li
-                        key={i}
-                        className="flex items-start gap-2 text-sm text-gray-700"
-                      >
-                        <span className="text-indigo-500 mt-0.5 shrink-0">●</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                  <BulletList items={companyAnalysis.cultureSignals} dotColor="bg-violet-500" />
                 </div>
               )}
             </div>
@@ -169,55 +164,44 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Strengths */}
-        <Section title="Key Strengths" icon="✅">
-          <ul className="space-y-2">
-            {result.strengths.map((s, i) => (
-              <li key={i} className="flex items-start gap-2 text-gray-700">
-                <span className="text-green-500 mt-1 shrink-0">●</span>
-                {s}
-              </li>
-            ))}
-          </ul>
+        <Section title="Key Strengths" iconColor="bg-emerald-500" delay={100}>
+          <BulletList items={result.strengths} dotColor="bg-emerald-500" />
         </Section>
 
         {/* Skill Gaps */}
-        <Section title="Skill Gaps" icon="⚠️">
-          <ul className="space-y-2">
-            {result.skillGaps.map((g, i) => (
-              <li key={i} className="flex items-start gap-2 text-gray-700">
-                <span className="text-orange-500 mt-1 shrink-0">●</span>
-                {g}
-              </li>
-            ))}
-          </ul>
+        <Section title="Skill Gaps" iconColor="bg-amber-500" delay={150}>
+          <BulletList items={result.skillGaps} dotColor="bg-amber-500" />
         </Section>
       </div>
 
       {/* Profile Updates */}
-      <Section title="Profile Optimization" icon="📝">
+      <Section title="Profile Optimization" iconColor="bg-indigo-500" delay={200}>
         <div className="space-y-4">
           {result.profileUpdates.map((u, i) => (
-            <div key={i} className="border-l-4 border-blue-400 pl-4">
-              <p className="font-medium text-blue-800">{u.section}</p>
-              <p className="text-gray-600 mt-1">{u.suggestion}</p>
+            <div key={i} className="border-l-4 border-indigo-400 pl-4">
+              <p className="font-medium text-indigo-700">{u.section}</p>
+              <p className="text-slate-600 mt-1">{u.suggestion}</p>
             </div>
           ))}
         </div>
       </Section>
 
       {/* Interview Prep */}
-      <Section title="Interview Preparation" icon="🎯">
+      <Section title="Interview Preparation" iconColor="bg-violet-500" delay={250}>
         <div className="space-y-6">
           {result.interviewPrep.map((q, i) => (
             <div key={i} className="space-y-2">
-              <p className="font-medium text-gray-800">
-                Q{i + 1}: {q.question}
+              <p className="font-medium text-slate-800 flex items-center gap-2">
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-violet-100 text-violet-700 text-xs font-bold shrink-0">
+                  {i + 1}
+                </span>
+                {q.question}
               </p>
-              <div className="bg-blue-50 rounded-lg p-4">
-                <p className="text-sm font-medium text-blue-700 mb-1">
+              <div className="bg-gradient-to-r from-indigo-50 to-violet-50 rounded-xl p-4">
+                <p className="text-sm font-medium text-indigo-700 mb-1">
                   How to answer:
                 </p>
-                <p className="text-gray-700 text-sm">{q.howToAnswer}</p>
+                <p className="text-slate-700 text-sm">{q.howToAnswer}</p>
               </div>
             </div>
           ))}
@@ -225,15 +209,8 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
       </Section>
 
       {/* Additional Tips */}
-      <Section title="Additional Recommendations" icon="💡">
-        <ul className="space-y-2">
-          {result.additionalTips.map((t, i) => (
-            <li key={i} className="flex items-start gap-2 text-gray-700">
-              <span className="text-purple-500 mt-1 shrink-0">→</span>
-              {t}
-            </li>
-          ))}
-        </ul>
+      <Section title="Additional Recommendations" iconColor="bg-purple-500" delay={300}>
+        <BulletList items={result.additionalTips} dotColor="bg-purple-500" />
       </Section>
     </div>
   );

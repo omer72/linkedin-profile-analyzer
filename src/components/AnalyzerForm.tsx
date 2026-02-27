@@ -103,8 +103,8 @@ export default function AnalyzerForm() {
     <div className="space-y-8">
       <form onSubmit={handleAnalyze} className="space-y-6">
         {/* Input Method Tabs */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
+        <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 p-6">
+          <label className="block text-sm font-semibold text-slate-700 mb-3">
             How would you like to provide your LinkedIn profile?
           </label>
           <div className="grid grid-cols-2 gap-2 mb-6">
@@ -113,14 +113,17 @@ export default function AnalyzerForm() {
                 key={tab.key}
                 type="button"
                 onClick={() => setInputMethod(tab.key)}
-                className={`px-4 py-3 rounded-lg border-2 text-center transition ${
+                className={`relative px-4 py-3 rounded-lg border-2 text-center transition-all duration-200 ${
                   inputMethod === tab.key
-                    ? "border-blue-500 bg-blue-50 text-blue-700"
-                    : "border-gray-200 hover:border-gray-300 text-gray-600"
+                    ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                    : "border-slate-200 hover:border-slate-300 text-slate-600"
                 }`}
               >
                 <span className="block text-sm font-semibold">{tab.label}</span>
                 <span className="block text-xs mt-0.5 opacity-70">{tab.desc}</span>
+                {inputMethod === tab.key && (
+                  <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                )}
               </button>
             ))}
           </div>
@@ -130,31 +133,36 @@ export default function AnalyzerForm() {
             <div>
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition ${
+                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${
                   pdfFileName
-                    ? "border-green-300 bg-green-50"
-                    : "border-gray-300 hover:border-blue-400 hover:bg-blue-50"
+                    ? "border-emerald-300 bg-emerald-50"
+                    : "border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/50"
                 }`}
               >
                 {parsingPdf ? (
                   <div className="flex flex-col items-center gap-2">
-                    <div className="w-8 h-8 border-3 border-blue-200 rounded-full animate-spin border-t-blue-600" />
-                    <p className="text-sm text-gray-600">Parsing PDF...</p>
+                    <div className="w-8 h-8 border-3 border-indigo-200 rounded-full animate-spin border-t-indigo-600" />
+                    <p className="text-sm text-slate-600">Parsing PDF...</p>
                   </div>
                 ) : pdfFileName ? (
                   <div>
-                    <p className="text-green-700 font-medium">{pdfFileName}</p>
-                    <p className="text-xs text-green-600 mt-1">
+                    <svg className="w-10 h-10 mx-auto mb-2 text-emerald-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-emerald-700 font-medium">{pdfFileName}</p>
+                    <p className="text-xs text-emerald-600 mt-1">
                       PDF parsed successfully. Click to upload a different file.
                     </p>
                   </div>
                 ) : (
                   <div>
-                    <div className="text-4xl mb-2">📄</div>
-                    <p className="text-gray-700 font-medium">
+                    <svg className="w-10 h-10 mx-auto mb-2 text-slate-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg>
+                    <p className="text-slate-700 font-medium">
                       Click to upload your LinkedIn PDF
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-slate-500 mt-1">
                       Go to LinkedIn &rarr; Your profile &rarr; More &rarr; Save to
                       PDF
                     </p>
@@ -178,7 +186,7 @@ export default function AnalyzerForm() {
               onChange={(e) => setProfileText(e.target.value)}
               placeholder={`Paste your LinkedIn profile here. Include:\n- Name and headline\n- About/Summary\n- Work experience (titles, companies, descriptions)\n- Education\n- Skills`}
               rows={10}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition resize-y"
+              className="w-full rounded-xl border border-slate-300 bg-slate-50/50 px-4 py-3 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200 resize-y"
             />
           )}
 
@@ -186,7 +194,7 @@ export default function AnalyzerForm() {
           {inputMethod === "pdf" && profileText && (
             <div className="mt-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-gray-500">
+                <span className="text-xs font-medium text-slate-500">
                   Extracted profile text (editable)
                 </span>
                 <button
@@ -205,15 +213,15 @@ export default function AnalyzerForm() {
                 value={profileText}
                 onChange={(e) => setProfileText(e.target.value)}
                 rows={8}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition resize-y"
+                className="w-full rounded-xl border border-slate-300 bg-slate-50/50 px-4 py-3 text-slate-900 text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200 resize-y"
               />
             </div>
           )}
         </div>
 
         {/* Job Description */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-slate-200 p-6">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
             Job Description
           </label>
           <textarea
@@ -221,14 +229,17 @@ export default function AnalyzerForm() {
             onChange={(e) => setJobDescription(e.target.value)}
             placeholder="Paste the full job description here including requirements, responsibilities, and qualifications..."
             rows={10}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition resize-y"
+            className="w-full rounded-xl border border-slate-300 bg-slate-50/50 px-4 py-3 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200 resize-y"
           />
         </div>
 
         {/* Error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
-            {error}
+          <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
+            <svg className="w-5 h-5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+            <span>{error}</span>
           </div>
         )}
 
@@ -236,7 +247,7 @@ export default function AnalyzerForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-lg shadow-blue-200"
+          className="w-full py-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl font-semibold text-lg hover:from-indigo-500 hover:to-violet-500 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all duration-200 shadow-lg shadow-indigo-200 animate-pulse-glow"
         >
           {loading ? "Analyzing..." : "Analyze My Profile"}
         </button>
@@ -247,8 +258,8 @@ export default function AnalyzerForm() {
 
       {/* Results */}
       {result && !loading && (
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+        <div className="animate-fade-in-up">
+          <h2 className="text-2xl font-bold text-slate-800 mb-6">
             Your Analysis Results
           </h2>
           <ResultsPanel result={result} />
